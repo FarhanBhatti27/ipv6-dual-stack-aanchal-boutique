@@ -84,13 +84,13 @@ The TTL of 127 on inter-VLAN pings shows the packet crossed R1 (host default is 
 
 ## Failure test: WAN link down
 
-Link R1 G0/0 to R2 was shut down on R1 and brought back up.
+Link R1 G0/0 to R2 was shut down on R1 and brought back up. The whole test (before, shutdown, after, recovered) is in one file: **outputs/failure-test.txt**. The single files `failure-test-after-down.txt` and `failure-test-recovered.txt` are kept as the raw captures.
 
 | Stage | Action | Result | Evidence |
 |---|---|---|---|
-| Before | `ping 2001:DB8:AA:100::2` from R1 | success | outputs/r1-to-r2.txt |
-| Down | `interface g0/0` then `shutdown`, ping IPv6 and IPv4 | fails, G0/0 administratively down | outputs/failure-test-after-down.txt |
-| Recovered | `no shutdown`, ping IPv6 and IPv4 | success again | outputs/failure-test-recovered.txt |
+| Before | `ping 2001:DB8:AA:100::2` from R1 | success | outputs/failure-test.txt (stage 1) |
+| After (down) | `interface g0/0` then `shutdown`, ping IPv6 and IPv4 | fails, G0/0 administratively down | outputs/failure-test.txt (stage 3) |
+| Recovered | `no shutdown`, ping IPv6 and IPv4 | success again | outputs/failure-test.txt (stage 4) |
 
 Key lines from the saved outputs:
 
@@ -252,11 +252,13 @@ Before OSPFv3 the remote site had no route back to the VLANs, so this ping could
 
 ### Failure test: WAN link down
 
+The whole test (before, shutdown, after, recovered) is in one file: **outputs/task4-failure-test.txt**.
+
 | Stage | Action | Result | Evidence |
 |---|---|---|---|
-| Before | PC-POS pings the R2 loopback | 4 of 4 replies | task4-before.txt |
-| Down | `shutdown` on R1 G0/0 | R1 neighbor table empty, no OSPF routes, ping from PC-POS fails with "Destination host unreachable" from the gateway 2001:DB8:AA:10::1 | task4-down.txt |
-| Recovered | `no shutdown` on R1 G0/0 | R2 neighbor FULL again, seven routes back, ping 4 of 4 replies | task4-recovered.txt |
+| Before | PC-POS pings the R2 loopback | 4 of 4 replies | task4-failure-test.txt (stage 1) |
+| Down | `shutdown` on R1 G0/0 | R1 neighbor table empty, no OSPF routes, ping from PC-POS fails with "Destination host unreachable" from the gateway 2001:DB8:AA:10::1 | task4-failure-test.txt (stage 3) |
+| Recovered | `no shutdown` on R1 G0/0 | R2 neighbor FULL again, seven routes back, ping 4 of 4 replies | task4-failure-test.txt (stage 4) |
 
 Observation: R1 was the DR before the test and the BDR afterwards, because DR and BDR are elected again when the adjacency is rebuilt. This does not affect traffic.
 
