@@ -1,0 +1,138 @@
+FAILURE TEST - OSPFv3 OVER THE WAN LINK (shutdown on R1 G0/0)
+All output below was copied from the devices. Only the headings were added.
+
+=====================================================================
+STAGE 1 - BEFORE: OSPFv3 up, remote site reachable
+=====================================================================
+(source: outputs/task4-before.txt, outputs/R1-ospf.txt, outputs/R2-ospf.txt)
+R2 neighbor and routes before the shutdown: outputs/R2-ospf.txt (neighbor 1.1.1.1 FULL, seven O routes)
+
+C:\>ping 2001:DB8:AA:200::1
+
+Pinging 2001:DB8:AA:200::1 with 32 bytes of data:
+
+Reply from 2001:DB8:AA:200::1: bytes=32 time=29ms TTL=254
+Reply from 2001:DB8:AA:200::1: bytes=32 time=12ms TTL=254
+Reply from 2001:DB8:AA:200::1: bytes=32 time=13ms TTL=254
+Reply from 2001:DB8:AA:200::1: bytes=32 time=12ms TTL=254
+
+Ping statistics for 2001:DB8:AA:200::1:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 12ms, Maximum = 29ms, Average = 16ms
+
+C:\>tracert 2001:DB8:AA:200::1
+
+Tracing route to 2001:DB8:AA:200::1 over a maximum of 30 hops: 
+
+  1   0 ms      0 ms      0 ms      2001:DB8:AA:10::1
+  2   12 ms     12 ms     9 ms      2001:DB8:AA:200::1
+
+Trace complete.
+
+R2-REMOTE#ping 2001:DB8:AA:30:201:C7FF:FE57:DE20
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 2001:DB8:AA:30:201:C7FF:FE57:DE20, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 12/14/22 ms
+
+R2-REMOTE#ping 2001:DB8:AA:10::1
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 2001:DB8:AA:10::1, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 0/0/0 ms
+
+R2-REMOTE#traceroute 2001:DB8:AA:30:201:C7FF:FE57:DE20
+Type escape sequence to abort.
+Tracing the route to 2001:DB8:AA:30:201:C7FF:FE57:DE20
+
+  1   2001:DB8:AA:100::1 0 msec    0 msec    0 msec    
+  2   2001:DB8:AA:30:201:C7FF:FE57:DE20 12 msec   0 msec    5 msec  
+
+=====================================================================
+STAGE 2 - ACTION: link shut down on R1
+=====================================================================
+R1-BOUTIQUE#conf t
+R1-BOUTIQUE(config)#interface g0/0
+R1-BOUTIQUE(config-if)#shutdown
+R1-BOUTIQUE(config-if)#end
+
+=====================================================================
+STAGE 3 - AFTER: neighbor gone, no OSPF routes, ping fails
+=====================================================================
+(source: outputs/task4-down.txt)
+
+R1-BOUTIQUE#sh ipv6 ospf neighbor 
+R1-BOUTIQUE#sh ipv6 route ospf 
+IPv6 Routing Table - 15 entries
+Codes: C - Connected, L - Local, S - Static, R - RIP, B - BGP
+       U - Per-user Static route, M - MIPv6
+       I1 - ISIS L1, I2 - ISIS L2, IA - ISIS interarea, IS - ISIS summary
+       O - OSPF intra, OI - OSPF inter, OE1 - OSPF ext 1, OE2 - OSPF ext 2
+       ON1 - OSPF NSSA ext 1, ON2 - OSPF NSSA ext 2
+       D - EIGRP, EX - EIGRP external
+**PC-POS Ping**
+C:\>ping 2001:DB8:AA:200::1
+
+Pinging 2001:DB8:AA:200::1 with 32 bytes of data:
+
+Reply from 2001:DB8:AA:10::1: Destination host unreachable.
+Reply from 2001:DB8:AA:10::1: Destination host unreachable.
+Reply from 2001:DB8:AA:10::1: Destination host unreachable.
+Reply from 2001:DB8:AA:10::1: Destination host unreachable.
+
+Ping statistics for 2001:DB8:AA:200::1:
+    Packets: Sent = 4, Received = 0, Lost = 4 (100% loss),
+
+=====================================================================
+STAGE 4 - RECOVERED: link brought back up
+=====================================================================
+R1-BOUTIQUE#conf t
+R1-BOUTIQUE(config)#interface g0/0
+R1-BOUTIQUE(config-if)#no shutdown
+R1-BOUTIQUE(config-if)#end
+(source of the output below: outputs/task4-recovered.txt)
+
+R2-REMOTE#sh ipv6 ospf neighbor 
+
+Neighbor ID     Pri   State           Dead Time   Interface ID    Interface
+1.1.1.1           1   FULL/BDR        00:00:35    1               GigabitEthernet0/0
+R2-REMOTE#sh ipv6 route ospf 
+IPv6 Routing Table - 12 entries
+Codes: C - Connected, L - Local, S - Static, R - RIP, B - BGP
+       U - Per-user Static route, M - MIPv6
+       I1 - ISIS L1, I2 - ISIS L2, IA - ISIS interarea, IS - ISIS summary
+       O - OSPF intra, OI - OSPF inter, OE1 - OSPF ext 1, OE2 - OSPF ext 2
+       ON1 - OSPF NSSA ext 1, ON2 - OSPF NSSA ext 2
+       D - EIGRP, EX - EIGRP external
+O   2001:DB8:AA:10::/64 [110/2]
+     via FE80::1, GigabitEthernet0/0
+O   2001:DB8:AA:20::/64 [110/2]
+     via FE80::1, GigabitEthernet0/0
+O   2001:DB8:AA:30::/64 [110/2]
+     via FE80::1, GigabitEthernet0/0
+O   2001:DB8:AA:40::/64 [110/2]
+     via FE80::1, GigabitEthernet0/0
+O   2001:DB8:AA:50::/64 [110/2]
+     via FE80::1, GigabitEthernet0/0
+O   2001:DB8:AA:60::/64 [110/2]
+     via FE80::1, GigabitEthernet0/0
+O   2001:DB8:AA:99::/64 [110/2]
+     via FE80::1, GigabitEthernet0/0
+**PC-POS**
+C:\>ping 2001:DB8:AA:200::1
+
+Pinging 2001:DB8:AA:200::1 with 32 bytes of data:
+
+Reply from 2001:DB8:AA:200::1: bytes=32 time<1ms TTL=254
+Reply from 2001:DB8:AA:200::1: bytes=32 time=12ms TTL=254
+Reply from 2001:DB8:AA:200::1: bytes=32 time=11ms TTL=254
+Reply from 2001:DB8:AA:200::1: bytes=32 time=12ms TTL=254
+
+Ping statistics for 2001:DB8:AA:200::1:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 0ms, Maximum = 12ms, Average = 8ms
+
