@@ -1,0 +1,27 @@
+R1-BOUTIQUE#ping 10.0.12.2
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.0.12.2, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 0/0/3 ms
+
+R1-BOUTIQUE#ping 10.0.12.2
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.0.12.2, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 0/0/0 ms
+
+R1-BOUTIQUE#ping 2001:DB8:AA:100::2
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 2001:DB8:AA:100::2, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 0/0/0 ms
+
+R1-BOUTIQUE#traceroute 2001:DB8:AA:100::2
+Type escape sequence to abort.
+Tracing the route to 2001:DB8:AA:100::2
+
+  1   2001:DB8:AA:100::2 1 msec    0 msec    5 msec    
+R1-BOUTIQUE#

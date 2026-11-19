@@ -1,0 +1,29 @@
+PC-POS (VLAN 10) to PC-ADMIN (VLAN 30), inter-VLAN through R1-BOUTIQUE
+
+C:\>ping 2001:DB8:AA:30::10
+
+Pinging 2001:DB8:AA:30::10 with 32 bytes of data:
+
+Reply from 2001:DB8:AA:30::10: bytes=32 time=10ms TTL=127
+Reply from 2001:DB8:AA:30::10: bytes=32 time<1ms TTL=127
+Reply from 2001:DB8:AA:30::10: bytes=32 time<1ms TTL=127
+Reply from 2001:DB8:AA:30::10: bytes=32 time=11ms TTL=127
+
+Ping statistics for 2001:DB8:AA:30::10:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 0ms, Maximum = 11ms, Average = 5ms
+
+C:\>ping 192.168.30.10
+
+Pinging 192.168.30.10 with 32 bytes of data:
+
+Reply from 192.168.30.10: bytes=32 time<1ms TTL=127
+Reply from 192.168.30.10: bytes=32 time=3ms TTL=127
+Reply from 192.168.30.10: bytes=32 time=3ms TTL=127
+Reply from 192.168.30.10: bytes=32 time<1ms TTL=127
+
+Ping statistics for 192.168.30.10:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 0ms, Maximum = 3ms, Average = 1ms

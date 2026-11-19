@@ -1,0 +1,33 @@
+C:\>ipconfig /all
+
+FastEthernet0 Connection:(default port)
+
+   Connection-specific DNS Suffix..: aanchal.local aanchal.local 
+   Physical Address................: 0002.1676.80EA
+   Link-local IPv6 Address.........: FE80::202:16FF:FE76:80EA
+   IPv6 Address....................: 2001:DB8:AA:20:A1C0:4070:FC14:D18E
+   IPv4 Address....................: 192.168.20.10
+   Subnet Mask.....................: 255.255.255.0
+   Default Gateway.................: FE80::1
+                                     192.168.20.1
+   DHCP Servers....................: 0.0.0.0
+   DHCPv6 IAID.....................: 1972848531
+   DHCPv6 Client DUID..............: 00-01-00-01-D4-86-1C-ED-00-02-16-76-80-EA
+   DNS Servers.....................: 2001:4860:4860::8888
+                                     0.0.0.0
+
+Bluetooth Connection:
+
+   Connection-specific DNS Suffix..: aanchal.local aanchal.local 
+   Physical Address................: 0060.70C1.7002
+   Link-local IPv6 Address.........: ::
+   IPv6 Address....................: ::
+   IPv4 Address....................: 0.0.0.0
+   Subnet Mask.....................: 0.0.0.0
+   Default Gateway.................: ::
+                                     0.0.0.0
+   DHCP Servers....................: 0.0.0.0
+   DHCPv6 IAID.....................: 1972848531
+   DHCPv6 Client DUID..............: 00-01-00-01-D4-86-1C-ED-00-02-16-76-80-EA
+   DNS Servers.....................: ::
+                                     0.0.0.0
