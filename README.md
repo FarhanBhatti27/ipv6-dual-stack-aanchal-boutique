@@ -125,6 +125,27 @@ GigabitEthernet0/0         [up/up]
 
 Other VLAN subinterfaces stayed up/up during the failure, so only the WAN to the remote site was affected.
 
+## Task 2: Dual stack on routers and the switch
+
+Every interface that carries traffic has both an IPv4 and an IPv6 address: R1 G0/0 (WAN) and the seven VLAN subinterfaces G0/1.10 to G0/1.99, R2 G0/0 and Loopback0, and the switch management interface Vlan99 (IPv4). The device interface table above lists every address. `ipv6 unicast-routing` is enabled on both routers.
+
+| What | Command | Evidence |
+|---|---|---|
+| R1 dual stack state | `show ip interface brief`, `show ipv6 interface brief` | outputs/R1-ip-int-br.txt, outputs/R1-ipv6-int-br.txt |
+| R2 dual stack state | `show ip interface brief`, `show ipv6 interface brief` | outputs/R2-ip-int-br.txt, outputs/R2-ipv6-int-br.txt |
+| Switch VLANs and trunk | `show vlan brief`, `show interfaces trunk` | outputs/SW-vlan-brief.txt, outputs/SW-trunk.txt |
+| Running configs | `show running-config` | configs/R1-BOUTIQUE.txt, configs/R2-REMOTE.txt, configs/SW-BOUTIQUE.txt |
+| Reachability over both protocols | ping IPv4 and IPv6, gateway, inter-VLAN and WAN | outputs/pc-pos-to-gateway.txt, outputs/pc-pos-to-pc-admin.txt, outputs/r1-to-r2.txt |
+| Link failure | WAN shutdown and recovery | outputs/failure-test.txt |
+
+### Task 2 design decision and trade-off
+
+**Decision:** keep inter-VLAN routing on the router (router on a stick): one 802.1Q trunk from SW-BOUTIQUE to R1 G0/1, one dual stack subinterface per VLAN.
+
+**Why:** the switch in this lab is a layer 2 Cisco 2960, not a multilayer switch, so it cannot route between VLANs or carry IPv6 gateway addresses. A router subinterface per VLAN gives the same result with one config to read, and each VLAN has the same `.1` and `::1` gateway in IPv4 and IPv6.
+
+**Trade-off:** all VLAN traffic goes up and down one physical link and through one router, so that link is a bottleneck and a single point of failure. For a small boutique this is acceptable. With a multilayer switch, SVIs with `ip routing` and `ipv6 unicast-routing` would route inside the switch at wire speed and keep traffic local, at the cost of more expensive hardware and a switch that needs a dual stack SDM template.
+
 ## Task 3: SLAAC for staff, DHCPv6 for servers
 
 ### Addressing method per VLAN
