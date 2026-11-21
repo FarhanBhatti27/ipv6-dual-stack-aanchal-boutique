@@ -1,0 +1,83 @@
+FAILURE TEST - DHCPv6 SERVER REMOVED FROM VLAN 20 (PC-INVENTORY)
+All output below was copied from PC-INVENTORY. Only the headings and the command lines were added.
+
+=====================================================================
+STAGE 1 - BEFORE: DHCPv6 server active, client holds a lease
+=====================================================================
+(the lease on R1 is in outputs/R1-dhcpv6.txt)
+
+C:\>ipconfig /all
+
+FastEthernet0 Connection:(default port)
+
+   Connection-specific DNS Suffix..: aanchal.local aanchal.local 
+   Physical Address................: 0002.1676.80EA
+   Link-local IPv6 Address.........: FE80::202:16FF:FE76:80EA
+   IPv6 Address....................: 2001:DB8:AA:20:A1C0:4070:FC14:D18E
+   IPv4 Address....................: 192.168.20.10
+   Subnet Mask.....................: 255.255.255.0
+   Default Gateway.................: FE80::1
+                                     192.168.20.1
+   DHCP Servers....................: 0.0.0.0
+   DHCPv6 IAID.....................: 1972848531
+   DHCPv6 Client DUID..............: 00-01-00-01-D4-86-1C-ED-00-02-16-76-80-EA
+   DNS Servers.....................: 2001:4860:4860::8888
+                                     0.0.0.0
+
+=====================================================================
+STAGE 2 - ACTION: DHCPv6 server removed from VLAN 20 on R1
+=====================================================================
+R1-BOUTIQUE#conf t
+R1-BOUTIQUE(config)#interface g0/1.20
+R1-BOUTIQUE(config-subif)#no ipv6 dhcp server SRV-INVENTORY
+R1-BOUTIQUE(config-subif)#end
+R1-BOUTIQUE#clear ipv6 dhcp binding
+(then PC-INVENTORY IPv6 set to Static and back to DHCPv6 to request a new lease)
+
+=====================================================================
+STAGE 3 - AFTER: no server, client gets no IPv6 address
+=====================================================================
+C:\>ipconfig /all
+
+FastEthernet0 Connection:(default port)
+
+   Connection-specific DNS Suffix..: aanchal.local aanchal.local 
+   Physical Address................: 0002.1676.80EA
+   Link-local IPv6 Address.........: FE80::202:16FF:FE76:80EA
+   IPv6 Address....................: ::
+   IPv4 Address....................: 192.168.20.10
+   Subnet Mask.....................: 255.255.255.0
+   Default Gateway.................: ::
+                                     192.168.20.1
+   DHCP Servers....................: 0.0.0.0
+   DHCPv6 IAID.....................: 1972848531
+   DHCPv6 Client DUID..............: 00-01-00-01-D4-86-1C-ED-00-02-16-76-80-EA
+   DNS Servers.....................: ::
+                                     0.0.0.0
+
+=====================================================================
+STAGE 4 - RECOVERED: DHCPv6 server applied again
+=====================================================================
+R1-BOUTIQUE#conf t
+R1-BOUTIQUE(config)#interface g0/1.20
+R1-BOUTIQUE(config-subif)#ipv6 dhcp server SRV-INVENTORY
+R1-BOUTIQUE(config-subif)#end
+(then PC-INVENTORY IPv6 set to Static and back to DHCPv6; gateway came back with the next router advertisement)
+C:\>ipconfig /all
+
+FastEthernet0 Connection:(default port)
+
+   Connection-specific DNS Suffix..: aanchal.local aanchal.local
+   Physical Address................: 0002.1676.80EA
+   Link-local IPv6 Address.........: FE80::202:16FF:FE76:80EA
+   IPv6 Address....................: 2001:DB8:AA:20:A1C0:4070:FC14:D18E
+   IPv4 Address....................: 192.168.20.10
+   Subnet Mask.....................: 255.255.255.0
+   Default Gateway.................: FE80::1
+                                     192.168.20.1
+   DHCP Servers....................: 0.0.0.0
+   DHCPv6 IAID.....................: 1972848531
+   DHCPv6 Client DUID..............: 00-01-00-01-D4-86-1C-ED-00-02-16-76-80-EA
+   DNS Servers.....................: 2001:4860:4860::8888
+                                     0.0.0.0
+

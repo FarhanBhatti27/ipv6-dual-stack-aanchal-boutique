@@ -1,0 +1,145 @@
+FAILURE TEST - WAN LINK R1-BOUTIQUE G0/0 <-> R2-REMOTE G0/0 (shutdown on R1)
+All output below was copied from the devices. Only the headings were added.
+
+=====================================================================
+STAGE 1 - BEFORE: link up, WAN reachable
+=====================================================================
+(source: outputs/r1-to-r2.txt, taken before the shutdown)
+
+R1-BOUTIQUE#ping 10.0.12.2
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.0.12.2, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 0/0/3 ms
+
+R1-BOUTIQUE#ping 10.0.12.2
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.0.12.2, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 0/0/0 ms
+
+R1-BOUTIQUE#ping 2001:DB8:AA:100::2
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 2001:DB8:AA:100::2, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 0/0/0 ms
+
+R1 interface state before the test (outputs/R1-ipv6-int-br.txt):
+GigabitEthernet0/0         [up/up]
+    FE80::1
+    2001:DB8:AA:100::1
+
+=====================================================================
+STAGE 2 - ACTION: link shut down on R1
+=====================================================================
+R1-BOUTIQUE#conf t
+R1-BOUTIQUE(config)#interface g0/0
+R1-BOUTIQUE(config-if)#shutdown
+R1-BOUTIQUE(config-if)#end
+
+=====================================================================
+STAGE 3 - AFTER: link down, WAN unreachable
+=====================================================================
+R1-BOUTIQUE#ping 2001:DB8:AA:100::2
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 2001:DB8:AA:100::2, timeout is 2 seconds:
+.....
+Success rate is 0 percent (0/5)
+
+R1-BOUTIQUE#ping 10.0.12.2
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.0.12.2, timeout is 2 seconds:
+.....
+Success rate is 0 percent (0/5)
+
+R1-BOUTIQUE#sh ipv6 int br
+GigabitEthernet0/0         [administratively down/down]
+    FE80::1
+    2001:DB8:AA:100::1
+GigabitEthernet0/1         [up/up]
+    unassigned
+GigabitEthernet0/1.10      [up/up]
+    FE80::1
+    2001:DB8:AA:10::1
+GigabitEthernet0/1.20      [up/up]
+    FE80::1
+    2001:DB8:AA:20::1
+GigabitEthernet0/1.30      [up/up]
+    FE80::1
+    2001:DB8:AA:30::1
+GigabitEthernet0/1.40      [up/up]
+    FE80::1
+    2001:DB8:AA:40::1
+GigabitEthernet0/1.50      [up/up]
+    FE80::1
+    2001:DB8:AA:50::1
+GigabitEthernet0/1.60      [up/up]
+    FE80::1
+    2001:DB8:AA:60::1
+GigabitEthernet0/1.99      [up/up]
+    FE80::1
+    2001:DB8:AA:99::1
+GigabitEthernet0/2         [administratively down/down]
+    unassigned
+Vlan1                      [administratively down/down]
+    unassigned
+
+=====================================================================
+STAGE 4 - RECOVERED: link brought back up
+=====================================================================
+R1-BOUTIQUE#conf t
+R1-BOUTIQUE(config)#interface g0/0
+R1-BOUTIQUE(config-if)#no shutdown
+R1-BOUTIQUE(config-if)#end
+
+R1-BOUTIQUE#ping 2001:DB8:AA:100::2
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 2001:DB8:AA:100::2, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 0/0/0 ms
+
+R1-BOUTIQUE#ping 10.0.12.2
+
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.0.12.2, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 0/0/0 ms
+
+R1-BOUTIQUE#sh ipv6 int br
+GigabitEthernet0/0         [up/up]
+    FE80::1
+    2001:DB8:AA:100::1
+GigabitEthernet0/1         [up/up]
+    unassigned
+GigabitEthernet0/1.10      [up/up]
+    FE80::1
+    2001:DB8:AA:10::1
+GigabitEthernet0/1.20      [up/up]
+    FE80::1
+    2001:DB8:AA:20::1
+GigabitEthernet0/1.30      [up/up]
+    FE80::1
+    2001:DB8:AA:30::1
+GigabitEthernet0/1.40      [up/up]
+    FE80::1
+    2001:DB8:AA:40::1
+GigabitEthernet0/1.50      [up/up]
+    FE80::1
+    2001:DB8:AA:50::1
+GigabitEthernet0/1.60      [up/up]
+    FE80::1
+    2001:DB8:AA:60::1
+GigabitEthernet0/1.99      [up/up]
+    FE80::1
+    2001:DB8:AA:99::1
+GigabitEthernet0/2         [administratively down/down]
+    unassigned
+Vlan1                      [administratively down/down]
+    unassigned
+

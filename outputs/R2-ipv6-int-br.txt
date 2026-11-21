@@ -1,0 +1,13 @@
+R2-REMOTE#SH IPv6 INT BR
+GigabitEthernet0/0         [up/up]
+    FE80::2
+    2001:DB8:AA:100::2
+GigabitEthernet0/1         [administratively down/down]
+    unassigned
+GigabitEthernet0/2         [administratively down/down]
+    unassigned
+Loopback0                  [up/up]
+    FE80::2
+    2001:DB8:AA:200::1
+Vlan1                      [administratively down/down]
+    unassigned

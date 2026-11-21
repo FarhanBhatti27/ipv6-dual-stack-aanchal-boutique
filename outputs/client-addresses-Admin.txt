@@ -1,0 +1,17 @@
+C:\>ipconfig /all
+
+FastEthernet0 Connection:(default port)
+
+   Connection-specific DNS Suffix..: 
+   Physical Address................: 0001.C757.DE20
+   Link-local IPv6 Address.........: FE80::201:C7FF:FE57:DE20
+   IPv6 Address....................: 2001:DB8:AA:30:201:C7FF:FE57:DE20
+   IPv4 Address....................: 192.168.30.10
+   Subnet Mask.....................: 255.255.255.0
+   Default Gateway.................: FE80::1
+                                     192.168.30.1
+   DHCP Servers....................: 0.0.0.0
+   DHCPv6 IAID.....................: 
+   DHCPv6 Client DUID..............: 00-01-00-01-BA-27-48-CB-00-01-C7-57-DE-20
+   DNS Servers.....................: ::
+                                     0.0.0.0

@@ -1,0 +1,29 @@
+PC-POS (VLAN 10, SLAAC client)
+
+C:\>ping 2001:DB8:AA:10::1
+
+Pinging 2001:DB8:AA:10::1 with 32 bytes of data:
+
+Reply from 2001:DB8:AA:10::1: bytes=32 time<1ms TTL=255
+Reply from 2001:DB8:AA:10::1: bytes=32 time<1ms TTL=255
+Reply from 2001:DB8:AA:10::1: bytes=32 time<1ms TTL=255
+Reply from 2001:DB8:AA:10::1: bytes=32 time<1ms TTL=255
+
+Ping statistics for 2001:DB8:AA:10::1:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 0ms, Maximum = 0ms, Average = 0ms
+
+C:\>ping 2001:DB8:AA:20:A1C0:4070:FC14:D18E
+
+Pinging 2001:DB8:AA:20:A1C0:4070:FC14:D18E with 32 bytes of data:
+
+Reply from 2001:DB8:AA:20:A1C0:4070:FC14:D18E: bytes=32 time=1ms TTL=127
+Reply from 2001:DB8:AA:20:A1C0:4070:FC14:D18E: bytes=32 time=12ms TTL=127
+Reply from 2001:DB8:AA:20:A1C0:4070:FC14:D18E: bytes=32 time=12ms TTL=127
+Reply from 2001:DB8:AA:20:A1C0:4070:FC14:D18E: bytes=32 time=11ms TTL=127
+
+Ping statistics for 2001:DB8:AA:20:A1C0:4070:FC14:D18E:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 1ms, Maximum = 12ms, Average = 9ms
