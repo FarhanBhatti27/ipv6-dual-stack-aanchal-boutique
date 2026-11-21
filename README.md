@@ -2,10 +2,7 @@
 
 Dual stack (IPv4 + IPv6) network for a fictional women's clothing boutique, built in Cisco Packet Tracer.
 
-**Status:** Task 1 (IPv6 plan) and Task 2 (dual stack on routers) complete.
-Task 3 (SLAAC and DHCPv6) complete.
-Task 4 (OSPFv3 between sites) is the next task: the build is in the repo and will be submitted after Task 3 is reviewed.
-Tasks 5-6 (IPv6 ACLs, handover) will extend this repo.
+**Status:** Task 1 (IPv6 plan), Task 2 (dual stack on routers) and Task 3 (SLAAC and DHCPv6) complete.
 
 ## Topology
 
@@ -230,76 +227,13 @@ Observation: right after the lease came back the gateway still showed `::`, beca
 - `ipv6 nd prefix ... no-autoconfig` is rejected by this Packet Tracer version (`Invalid input`). On real IOS it would be added on G0/1.20 and G0/1.60 so servers use only DHCPv6 and do not also self-assign a SLAAC address. In this lab the failure test showed no address at all while the server was removed.
 - `show ipv6 dhcp pool` counts "8 in use" for SRV-INVENTORY while one client is active. This is a Packet Tracer counter and does not match real leases (see `show ipv6 dhcp binding`).
 
-## Task 4: OSPFv3 between sites
-
-R1-BOUTIQUE (main store) and R2-REMOTE (remote site) run OSPFv3, process 1, single area 0, over the WAN link `2001:DB8:AA:100::/64`.
-
-### Configuration
-
-```
-! R1-BOUTIQUE
-ipv6 router ospf 1
- router-id 1.1.1.1
- passive-interface default
- no passive-interface GigabitEthernet0/0
-interface GigabitEthernet0/0
- ipv6 ospf 1 area 0
-interface GigabitEthernet0/1.10, .20, .30, .40, .50, .60, .99
- ipv6 ospf 1 area 0
-
-! R2-REMOTE
-ipv6 router ospf 1
- router-id 2.2.2.2
- passive-interface default
- no passive-interface GigabitEthernet0/0
-interface GigabitEthernet0/0
- ipv6 ospf 1 area 0
-interface Loopback0
- ipv6 ospf 1 area 0
-```
-
-VLAN subinterfaces are passive: their prefixes are advertised but no OSPF hellos leave towards PCs. Router IDs are set by hand (1.1.1.1 and 2.2.2.2) because OSPFv3 needs a 32-bit ID even on an IPv6-only process. Neighbors and next hops use link-local addresses (FE80::1 on R1, FE80::2 on R2), which is why the fixed link-local addresses from Task 1 matter.
-
-### Task 4 tests
-
-| Test | Command | Expected | Result | Evidence |
-|---|---|---|---|---|
-| Neighbor up | `show ipv6 ospf neighbor` (R1, R2) | neighbor in FULL state | PASS | R1-ospf.txt, R2-ospf.txt |
-| Routes learned on R2 | `show ipv6 route ospf` (R2) | seven VLAN prefixes via FE80::1 | PASS | R2-ospf.txt |
-| Route learned on R1 | `show ipv6 route ospf` (R1) | 2001:DB8:AA:200::1/128 via FE80::2 | PASS | R1-ospf.txt |
-| Site to site | `ping 2001:DB8:AA:200::1` (PC-POS) | 0% loss, TTL 254 | PASS | task4-before.txt |
-| Path | `tracert 2001:DB8:AA:200::1` (PC-POS) | R1 then R2 | PASS | task4-before.txt |
-| Return path | `ping 2001:DB8:AA:30:201:C7FF:FE57:DE20` (R2 to PC-ADMIN) | 100% success | PASS | task4-before.txt |
-
-Before OSPFv3 the remote site had no route back to the VLANs, so this ping could not work. The R2 loopback shows as a /128 host route on R1 because OSPF advertises a loopback as a host route.
-
-### Failure test: WAN link down
-
-The whole test (before, shutdown, after, recovered) is in one file: **outputs/task4-failure-test.txt**.
-
-| Stage | Action | Result | Evidence |
-|---|---|---|---|
-| Before | PC-POS pings the R2 loopback | 4 of 4 replies | task4-failure-test.txt (stage 1) |
-| Down | `shutdown` on R1 G0/0 | R1 neighbor table empty, no OSPF routes, ping from PC-POS fails with "Destination host unreachable" from the gateway 2001:DB8:AA:10::1 | task4-failure-test.txt (stage 3) |
-| Recovered | `no shutdown` on R1 G0/0 | R2 neighbor FULL again, seven routes back, ping 4 of 4 replies | task4-failure-test.txt (stage 4) |
-
-Observation: R1 was the DR before the test and the BDR afterwards, because DR and BDR are elected again when the adjacency is rebuilt. This does not affect traffic.
-
-### Task 4 design decision and trade-off
-
-**Decision:** OSPFv3 in a single area 0, with passive interfaces on all VLAN subinterfaces and manually set router IDs.
-
-**Why:** the boutique has two sites and a handful of prefixes, so one area is enough and easy to read. Passive interfaces stop routing traffic reaching PCs, guests and cameras, and the VLAN prefixes are still advertised. Fixed router IDs keep neighbor output readable.
-
-**Trade-off:** a single area does not scale to many sites, because every router holds the full database, and a dynamic protocol is more to maintain than a couple of static routes for two sites. OSPF was chosen anyway because the brief asks for it and because a new site or VLAN is learned automatically. OSPFv3 only carries IPv6 here, so IPv4 between the sites needs OSPFv2 or static routes separately.
-
 ## Configuration notes and known limits
 
 - `ipv6 unicast-routing` is enabled on R1 and R2. Without it a router will not forward IPv6.
 - During build, the subinterfaces briefly carried a second, stale prefix (`2001:DB8:ACBA:X::1`). It was removed so each VLAN has exactly one global prefix, and the final `show ipv6 interface brief` confirms this.
 - SW-BOUTIQUE is a layer 2 switch (2960). Routing between VLANs is done on R1 (router on a stick), so the switch has no layer 3 IPv6 role. Its IPv6 management address is not configured because the Packet Tracer 2960 does not support it.
 - Task 2 used static host addresses. Task 3 replaced them with SLAAC and DHCPv6 on VLANs 10, 20, 30, 40, 60 (see below). VLANs 50 and 99 stay static.
-- Task 2 had no routing protocol, so PCs could not reach R2's remote LAN. Task 4 added OSPFv3 for IPv6 (IPv4 between the sites is not routed yet).
+- No routing protocol is configured yet, so PCs cannot reach R2's remote LAN. R1 and R2 only reach each other over the directly connected WAN link.
 - Packet Tracer shows `no ipv6 cef` on the routers. This is the Packet Tracer default and does not affect forwarding here.
 
 ## Repository layout
@@ -313,4 +247,4 @@ outputs/   ping, traceroute, show ip/ipv6 interface brief, vlan, trunk, failure 
 
 ## Note on what I did and why
 
-I planned a /48 carved into one /64 per VLAN and per link, matched to the existing IPv4 plan, then configured dual stack on R1 (router on a stick over an 802.1Q trunk) and R2. I checked the result with host to gateway, inter-VLAN and site to site pings, and proved the link failure and recovery. The plan is built so SLAAC, OSPFv3 and the ACLs in the next tasks can be added without renumbering.
+I planned a /48 carved into one /64 per VLAN and per link, matched to the existing IPv4 plan, then configured dual stack on R1 (router on a stick over an 802.1Q trunk) and R2. I checked the result with host to gateway, inter-VLAN and site to site pings, and proved the link failure and recovery. I then added SLAAC for the staff and guest VLANs and stateful DHCPv6 for the server VLANs, saved every client address as text, and tested a DHCPv6 failure with before, after and recovered output. The plan is built so later changes can be added without renumbering.
