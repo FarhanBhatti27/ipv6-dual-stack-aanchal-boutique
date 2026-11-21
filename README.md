@@ -4,7 +4,7 @@ Dual stack (IPv4 + IPv6) network for a fictional women's clothing boutique, buil
 
 **Status:** Task 1 (IPv6 plan) and Task 2 (dual stack on routers) complete.
 Task 3 (SLAAC and DHCPv6) complete.
-Task 4 (OSPFv3 between sites) complete.
+Task 4 (OSPFv3 between sites) is the next task: the build is in the repo and will be submitted after Task 3 is reviewed.
 Tasks 5-6 (IPv6 ACLs, handover) will extend this repo.
 
 ## Topology
