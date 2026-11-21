@@ -207,11 +207,13 @@ SLAAC clients build the interface ID from their MAC address (EUI-64), for exampl
 
 ### Failure test: DHCPv6 server removed from VLAN 20
 
+The whole test (before, server removed, after, recovered) is in one file: **outputs/failure3-test.txt**. The single captures `failure3-before.txt`, `failure3-down.txt` and `failure3-recovered.txt` are kept as the raw outputs.
+
 | Stage | Action | Result | Evidence |
 |---|---|---|---|
-| Before | PC-INVENTORY holds a lease | IPv6 2001:DB8:AA:20:A1C0:4070:FC14:D18E, DNS 2001:4860:4860::8888, gateway FE80::1 | failure3-before.txt |
-| Down | `no ipv6 dhcp server SRV-INVENTORY` on G0/1.20, `clear ipv6 dhcp binding`, client renews | IPv6 address `::`, DNS `::`, only link-local FE80 left | failure3-down.txt |
-| Recovered | `ipv6 dhcp server SRV-INVENTORY` re-applied, client renews | address and DNS back, gateway FE80::1 back after the router advertisement | failure3-recovered.txt |
+| Before | PC-INVENTORY holds a lease | IPv6 2001:DB8:AA:20:A1C0:4070:FC14:D18E, DNS 2001:4860:4860::8888, gateway FE80::1 | failure3-test.txt (stage 1) |
+| Down | `no ipv6 dhcp server SRV-INVENTORY` on G0/1.20, `clear ipv6 dhcp binding`, client renews | IPv6 address `::`, DNS `::`, only link-local FE80 left | failure3-test.txt (stage 3) |
+| Recovered | `ipv6 dhcp server SRV-INVENTORY` re-applied, client renews | address and DNS back, gateway FE80::1 back after the router advertisement | failure3-test.txt (stage 4) |
 
 Observation: right after the lease came back the gateway still showed `::`, because DHCPv6 does not hand out a default gateway. The gateway returns with the next router advertisement (a few minutes). IPv4 on the client was unaffected during the whole test.
 
