@@ -4,16 +4,6 @@ Dual stack (IPv4 + IPv6) network for a fictional women's clothing boutique, buil
 
 **Status:** Task 1 (IPv6 plan), Task 2 (dual stack on routers) and Task 3 (SLAAC and DHCPv6) complete.
 
-## Task 3 at a glance
-
-**Design decision:** SLAAC for the staff and guest VLANs (10, 30, 40), stateful DHCPv6 on R1 for the server VLANs (20 inventory, 60 e-commerce).
-
-**Why:** staff and guest devices change often, and SLAAC needs no server or per-device setup. Servers get address and DNS from a central pool with a binding log, so it is clear which server holds which address.
-
-**Trade-off:** SLAAC alone gives no DNS server (the SLAAC clients show DNS `::`), so staff would need RDNSS in the router advertisement or stateless DHCPv6 added later. EUI-64 addresses also expose the device MAC address. DHCPv6 adds pools and flags to manage, and a server's address can change at renewal, so a real server should get a reservation or a static address.
-
-**Evidence:** `outputs/client-addresses-POS.txt`, `-Admin.txt`, `-Guest.txt` (SLAAC) and `-INVENTORY.txt`, `-ECOMMERCE.txt` (DHCPv6) hold the full `ipconfig /all` text; leases on R1 are in `outputs/R1-dhcpv6.txt`; the failure test (before, server removed, after, recovered) is in `outputs/failure3-test.txt`. The full Task 3 section is further down, under "Task 3: SLAAC for staff, DHCPv6 for servers".
-
 ## Topology
 
 ![Topology](Topology.png)
